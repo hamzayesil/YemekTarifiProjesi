@@ -1,6 +1,25 @@
 ﻿@model IEnumerable<YemekTarifiProjesi.Models.Recipe>
 
 
+<div class="container mt-4">
+    <h2 class="text-center mb-4">🍽️ Paylaşılan Lezzetler</h2>
+    <div class="row">
+        @foreach (var item in Model) {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-danger">@item.Name</h5>
+                        <p class="card-text"><strong>Malzemeler:</strong> @item.Ingredients</p>
+                        <p class="card-text">@item.Instructions</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <small class="text-muted">Kategori: @item.Category</small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
 
 
 <div class="jumbotron jumbotron-fluid text-white rounded shadow-lg mb-5" 
