@@ -46,9 +46,5 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Recipes}/{action=Index}/{id?}");
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.EnsureCreated(); // Tablo yoksa hemen oluþturur
-}
+
 app.Run();
