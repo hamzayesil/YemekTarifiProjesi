@@ -12,6 +12,21 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+// Veritabaný tablolarýný otomatik oluþturma kodu
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        context.Database.Migrate(); // Tablolar yoksa oluþturur
+    }
+    catch (Exception ex)
+    {
+        // Hata oluþursa loglara yazar
+        Console.WriteLine("Veritabaný oluþturma hatasý: " + ex.Message);
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
