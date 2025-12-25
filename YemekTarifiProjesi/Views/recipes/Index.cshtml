@@ -1,116 +1,67 @@
 ﻿@model IEnumerable<YemekTarifiProjesi.Models.Recipe>
 
-<div class="p-5 mb-4 bg-light rounded-3 shadow"
-     style="background-image: url('https://source.unsplash.com/1600x900/?food,dinner'); background-size: cover; background-position: center; position: relative;">
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
 
-    <div style="background-color: rgba(0, 0, 0, 0.6); position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 0.3rem;"></div>
-
-    <div class="container-fluid py-5 position-relative text-white text-center">
-        <h1 class="display-4 fw-bold">Hoşgeldiniz! 🍳</h1>
-        <p class="col-md-8 mx-auto fs-4">
-            En lezzetli tarifleri keşfetmeye hazır mısınız?
-            Aradığınız tüm lezzetler burada.
-        </p>
-        <a asp-action="Create" class="btn btn-warning btn-lg mt-3 fw-bold">
-            + Yeni Tarif Ekle
-        </a>
+<div class="hero-section">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Hoşgeldiniz! 🥘</h1>
+        <p class="lead">Lezzet dünyasına adım atın.</p>
+        <a href="/Recipes/Create" class="btn btn-warning btn-lg mt-3 fw-bold">+ Tarif Ekle</a>
     </div>
 </div>
-
-
-<div class="row mb-3 mt-3">
-    <div class="col-md-6">
-        <form asp-controller="Recipes" asp-action="Index" method="get">
-            <div class="input-group">
-                <input type="text" name="searchString" class="form-control" placeholder="Yemek ismi ara...">
-                <button class="btn btn-primary" type="submit">Ara</button>
-            </div>
-        </form>
-    </div>
-    <div class="col-md-6 text-end">
-        <a asp-action="Index" class="btn btn-secondary">Tümünü Göster</a>
-    </div>
-</div>
-
-
-<div class="container mt-4">
-    <h2 class="text-center mb-4">🍽️ Paylaşılan Lezzetler</h2>
-    <div class="row">
-        @foreach (var item in Model) {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title text-danger">@item.Name</h5>
-                        <p class="card-text"><strong>Malzemeler:</strong> @item.Ingredients</p>
-                        <p class="card-text">@item.Instructions</p>
-                    </div>
-                    <div class="card-footer bg-transparent border-0">
-                        <small class="text-muted">Kategori: @item.Category</small>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-</div>
-
-
-<div class="jumbotron jumbotron-fluid text-white rounded shadow-lg mb-5" 
-     style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-            url('/images/ana-gorsel.jpg'); 
-            background-size: cover; 
-            background-position: center; 
-            height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;">
-    <div class="container text-center">
-        <h1 class="display-3 font-weight-bold" style="text-shadow: 2px 2px 8px #000;">En Lezzetli Tarifler</h1>
-        <p class="lead font-italic" style="font-size: 1.5rem; text-shadow: 1px 1px 4px #000;">Kendi mutfağının şefi olmaya hazır mısın?</p>
-    </div>
-</div>
-
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="font-weight-bold">Yemek Tarifleri Platformu</h2>
-        <a asp-action="Create" class="btn btn-success shadow-sm px-4">➕ Yeni Tarif Paylaş</a>
-    </div>
-    </div>
 
 <div class="container mt-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">🍽️ Paylaşılan Lezzetler</h2>
+        <hr class="w-25 mx-auto text-warning" style="height: 3px; opacity: 1;">
+    </div>
+
     <div class="row">
-        @foreach (var item in Model)
+        @if (Model != null && Model.Any())
         {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow border-0 rounded-lg overflow-hidden">
-                    <img src="https://loremflickr.com/320/240/food,cooking?random=@item.Id" class="card-img-top" alt="Yemek Resmi">
-                    <div class="card-body">
-                        <h5 class="card-title text-success">@item.Name</h5>
-                        <p class="badge badge-warning text-white">@item.Category</p>
-                        <p class="card-text text-muted">@item.Ingredients.Substring(0, Math.Min(item.Ingredients.Length, 60))...</p>
+            @foreach (var item in Model)
+            {
+                // --- BURADA RESMİ KATEGORİYE GÖRE BELİRLİYORUZ ---
+                string resimLink = "https://i.ytimg.com/vi/KWE0kdVpcog/hqdefault.jpg"; // Varsayılan (Ana Yemek)
+
+                if (item.Category != null && item.Category.Contains("Çorba"))
+                {
+                    resimLink = "https://d17wu0fn6x6rgz.cloudfront.net/img/w/tarif/mgt/16_16_11zon-487.webp";
+                }
+                else if (item.Category != null && item.Category.Contains("Tatlı"))
+                {
+                    resimLink = "https://pimedya.com/images/gorseller/fistikli-baklava-porsiyon.jpg";
+                }
+                // ----------------------------------------------------
+
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <img src="@resimLink" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
+
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold text-dark">@item.Name</h5>
+                            <span class="badge bg-warning text-dark mb-2">@item.Category</span>
+                            <p class="card-text text-muted small">
+                                @(item.Ingredients != null && item.Ingredients.Length > 80 ? item.Ingredients.Substring(0, 77) + "..." : item.Ingredients)
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 pb-3">
+                            <a href="/Recipes/Details/@item.Id" class="btn btn-outline-dark w-100">İncele</a>
+                        </div>
                     </div>
-                    <div class="card-footer bg-transparent border-0 d-flex justify-content-between pb-3">
-                       
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm" onclick="return confirm('Sileyim mi?')">Sil</a>
-                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center">
+                <div class="alert alert-light border" role="alert">
+                    <h5>Henüz hiç tarif yok! 😔</h5>
+                    <p>İlk tarifi sen ekle!</p>
                 </div>
             </div>
         }
     </div>
-</div>
-
-
-
-
-<div class="row">
-    @foreach (var item in Model)
-    {
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title text-primary">@item.Name</h5> <p class="card-text">@item.@item.Name.Substring(0, Math.Min(item.Name.Length, 50))...</p> <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-success btn-sm">Tarifi İncele</a>
-                </div>
-            </div>
-        </div>
-    }
-</div>
 </div>

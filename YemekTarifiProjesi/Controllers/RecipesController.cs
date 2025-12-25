@@ -48,20 +48,26 @@ namespace YemekTarifiProjesi.Controllers
         {
             return View();
         }
-
         [HttpPost]
-        public IActionResult Create(Recipe recipe)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,Name,Ingredients,Category")] Recipe recipe)
         {
-             if (ModelState.IsValid) 
+            if (ModelState.IsValid)
             {
-                recipe.Id = _recipes.Count > 0 ? _recipes.Max(r => r.Id) + 1 : 1;
-                _recipes.Add(recipe);
+                // Kategori boş gelirse varsayılan ata
+                if (string.IsNullOrEmpty(recipe.Category))
+                {
+                    recipe.Category = "Ana Yemek";
+                }
+
+                _context.Add(recipe);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(recipe);
         }
 
-      
+
         public IActionResult Delete(int id)
         {
             var recipe = _recipes.FirstOrDefault(r => r.Id == id);

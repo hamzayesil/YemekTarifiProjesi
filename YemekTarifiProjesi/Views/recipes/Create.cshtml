@@ -1,35 +1,49 @@
 ﻿@model YemekTarifiProjesi.Models.Recipe
 
-<div class="container mt-4">
+@{
+    ViewData["Title"] = "Yeni Tarif Ekle";
+}
+
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6 border p-4 shadow-sm bg-light">
-            <h2 class="text-center mb-4">Yeni Tarif Ekle</h2>
-            <form asp-action="Create">
-                <div class="form-group mb-3">
-                    <label asp-for="Name" class="control-label">Yemek Adı</label>
-                    <input asp-for="Name" class="form-control" placeholder="Örn: Mercimek Çorbası" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="fw-bold mb-0 text-center">🍳 Yeni Tarif Ekle</h3>
                 </div>
-                <div class="form-group mb-3">
-                    <label asp-for="Category" class="control-label">Kategori</label>
-                    <select asp-for="Category" class="form-control">
-                        <option value="">Seçiniz...</option>
-                        <option value="Ana Yemek">Ana Yemek</option>
-                        <option value="Tatlı">Tatlı</option>
-                        <option value="Çorba">Çorba</option>
-                    </select>
-                    <span asp-validation-for="Category" class="text-danger"></span>
+                <div class="card-body">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Name" class="control-label fw-bold">Yemek Adı</label>
+                            <input asp-for="Name" class="form-control" placeholder="Örn: Mercimek Çorbası" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Category" class="control-label fw-bold">Kategori</label>
+                            <select asp-for="Category" class="form-control">
+                                <option value="Ana Yemek">Ana Yemek</option>
+                                <option value="Çorba">Çorba</option>
+                                <option value="Tatlı">Tatlı</option>
+                            </select>
+                            <span asp-validation-for="Category" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Ingredients" class="control-label fw-bold">Malzemeler</label>
+                            <textarea asp-for="Ingredients" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Ingredients" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <input type="submit" value="Tarifi Kaydet" class="btn btn-warning fw-bold" />
+                            <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group mb-3">
-                    <label asp-for="Ingredients" class="control-label">Malzemeler</label>
-                    <textarea asp-for="Ingredients" class="form-control" rows="3"></textarea>
-                    <span asp-validation-for="Ingredients" class="text-danger"></span>
-                </div>
-                <div class="form-group mt-4">
-                    <button type="submit" class="btn btn-primary w-100">Tarifi Kaydet</button>
-                    <a asp-action="Index" class="btn btn-secondary w-100 mt-2">Geri Dön</a>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
