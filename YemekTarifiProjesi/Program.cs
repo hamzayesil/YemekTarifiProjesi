@@ -1,56 +1,68 @@
-using System;
 using Microsoft.EntityFrameworkCore;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
-using YemekTarifiProjesi.Models; 
+using YemekTarifiProjesi.Models; // Eðer hata verirse burayý .Data olarak dene
 
 var builder = WebApplication.CreateBuilder(args);
-// 1. Baðlantý adresini al
+
+// ---------------------------------------------------------
+// 1. VERÝTABANI BAÐLANTISI VE PORT DÜZELTME KODU (BURASI ÇOK ÖNEMLÝ)
+// ---------------------------------------------------------
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// GÜVENLÝK AYARI: Linkin baþýndaki/sonundaki boþluklarý ve týrnak iþaretlerini temizle
+// Link temizliði (Boþluk ve týrnaklarý at)
 if (!string.IsNullOrEmpty(connectionString))
 {
     connectionString = connectionString.Trim().Trim('"');
 }
 
-// 2. Eðer adres (temizlendikten sonra) "postgres" ile baþlýyorsa dönüþtür
+// Render URL Dönüþtürücü
 if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("postgres"))
 {
-    var databaseUri = new Uri(connectionString);
-    var userInfo = databaseUri.UserInfo.Split(':');
+    try
+    {
+        var databaseUri = new Uri(connectionString);
+        var userInfo = databaseUri.UserInfo.Split(':');
 
-    // C#'ýn anlayacaðý formata çevir
-    connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.LocalPath.TrimStart('/')};User Id={userInfo[0]};Password={userInfo[1]};Ssl Mode=Require;Trust Server Certificate=true";
+        // PORT DÜZELTME: Eðer port -1 gelirse (yazmýyorsa) 5432 yap.
+        int port = databaseUri.Port == -1 ? 5432 : databaseUri.Port;
+
+        connectionString = $"Host={databaseUri.Host};Port={port};Database={databaseUri.LocalPath.TrimStart('/')};User Id={userInfo[0]};Password={userInfo[1]};Ssl Mode=Require;Trust Server Certificate=true";
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("URL Dönüþtürme Hatasý: " + ex.Message);
+        // Hata olsa bile devam etsin, belki connectionString doðrudur.
+    }
 }
 
-// 3. Veritabanýna baðlan
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
-// Add services to the container.
+
+// ---------------------------------------------------------
+
+// Diðer servisler
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
-// Veritabaný tablolarýný otomatik oluþturma kodu
+
+// Otomatik Veritabaný Güncelleme (Migration)
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<AppDbContext>();
-        context.Database.Migrate(); // Tablolar yoksa oluþturur
+        context.Database.Migrate();
     }
     catch (Exception ex)
     {
-        // Hata oluþursa loglara yazar
         Console.WriteLine("Veritabaný oluþturma hatasý: " + ex.Message);
     }
 }
 
-// Configure the HTTP request pipeline.
+// HTTP Ýsteði hattý (Pipeline)
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
