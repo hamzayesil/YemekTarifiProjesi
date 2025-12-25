@@ -4,18 +4,26 @@ using Npgsql.EntityFrameworkCore.PostgreSQL;
 using YemekTarifiProjesi.Models; 
 
 var builder = WebApplication.CreateBuilder(args);
-// YERÝNE YAPIÞTIRACAÐIN KISIM
+// 1. Baðlantý adresini al
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Eðer adres "postgres://" ile baþlýyorsa (Render formatý), parçalayýp düzelt
-if (connectionString != null && connectionString.StartsWith("postgres://"))
+// GÜVENLÝK AYARI: Linkin baþýndaki/sonundaki boþluklarý ve týrnak iþaretlerini temizle
+if (!string.IsNullOrEmpty(connectionString))
+{
+    connectionString = connectionString.Trim().Trim('"');
+}
+
+// 2. Eðer adres (temizlendikten sonra) "postgres" ile baþlýyorsa dönüþtür
+if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("postgres"))
 {
     var databaseUri = new Uri(connectionString);
     var userInfo = databaseUri.UserInfo.Split(':');
 
+    // C#'ýn anlayacaðý formata çevir
     connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.LocalPath.TrimStart('/')};User Id={userInfo[0]};Password={userInfo[1]};Ssl Mode=Require;Trust Server Certificate=true";
 }
 
+// 3. Veritabanýna baðlan
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 // Add services to the container.
