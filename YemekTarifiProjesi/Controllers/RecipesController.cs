@@ -65,7 +65,18 @@ namespace YemekTarifiProjesi.Controllers
                 return Content("HATA DETAYI: " + mesaj);
             }
         }
-
+        // Silme işlemi için Controller kodu
+        [HttpPost]
+        public IActionResult Sil(int id)
+        {
+            var tarif = _context.Recipes.Find(id); // 'Recipes' senin tablonun adı olmalı
+            if (tarif != null)
+            {
+                _context.Recipes.Remove(tarif);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Index"); // Silince listeye geri dön
+        }
 
         public IActionResult Delete(int id)
         {

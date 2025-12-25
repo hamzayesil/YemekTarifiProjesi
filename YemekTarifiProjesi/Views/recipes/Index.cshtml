@@ -1,7 +1,27 @@
 ﻿@model IEnumerable<YemekTarifiProjesi.Models.Recipe>
 
+<style>
+    /* Senin gönderdiğin silme butonu tasarımı */
+    .btn-sil-ozel {
+        background-color: rgba(220, 53, 69, 0.85); /* Hafif şeffaf kırmızı */
+        color: white;
+        border: none;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: 0.3s;
+        backdrop-filter: blur(5px); /* Arka planı hafif bulandırır */
+    }
+
+        .btn-sil-ozel:hover {
+            background-color: rgb(220, 53, 69);
+            transform: scale(1.1); /* Üzerine gelince hafif büyür */
+        }
+</style>
+
 @{
-    ViewData["Title"] = "Ana Sayfa";
+    ViewData["Title"] = "Tarif Listesi";
 }
 
 <div class="hero-section" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200'); background-size: cover; height: 400px; display: flex; align-items: center; justify-content: center; color: white; text-align: center; border-radius: 0 0 20px 20px; margin-bottom: 40px;">
@@ -26,8 +46,21 @@
                 else if (item.Category == "Tatlı") { resimLink = "https://pimedya.com/images/gorseller/fistikli-baklava-porsiyon.jpg"; }
 
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow border-0">
-                        <img src="@resimLink" class="card-img-top" style="height: 200px; object-fit: cover;">
+                    <div class="card h-100 shadow border-0 overflow-hidden">
+
+                        <div style="position: relative;">
+                            <img src="@resimLink" class="card-img-top" style="height: 200px; object-fit: cover;">
+
+                            <form asp-action="Sil" asp-route-id="@item.Id" method="post"
+                                  onsubmit="return confirm('Bu tarifi silmek istediğinize emin misiniz?');"
+                                  style="position: absolute; bottom: 10px; right: 10px; margin: 0;">
+                                <button type="submit" class="btn btn-danger btn-sm shadow"
+                                        style="border-radius: 20px; padding: 5px 15px; background-color: rgba(220, 53, 69, 0.9); border: none;">
+                                    <i class="fa fa-trash"></i> Sil
+                                </button>
+                            </form>
+                        </div>
+
                         <div class="card-body">
                             <h5 class="card-title fw-bold">@item.Name</h5>
                             <span class="badge bg-warning text-dark mb-2">@item.Category</span>
