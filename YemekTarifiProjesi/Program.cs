@@ -4,10 +4,20 @@ using Npgsql.EntityFrameworkCore.PostgreSQL;
 using YemekTarifiProjesi.Models; 
 
 var builder = WebApplication.CreateBuilder(args);
+// YERÝNE YAPIÞTIRACAÐIN KISIM
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Eðer adres "postgres://" ile baþlýyorsa (Render formatý), parçalayýp düzelt
+if (connectionString != null && connectionString.StartsWith("postgres://"))
+{
+    var databaseUri = new Uri(connectionString);
+    var userInfo = databaseUri.UserInfo.Split(':');
+
+    connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.LocalPath.TrimStart('/')};User Id={userInfo[0]};Password={userInfo[1]};Ssl Mode=Require;Trust Server Certificate=true";
+}
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+    options.UseNpgsql(connectionString));
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
