@@ -7,42 +7,44 @@
 <div class="hero-section" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200'); background-size: cover; height: 400px; display: flex; align-items: center; justify-content: center; color: white; text-align: center; border-radius: 0 0 20px 20px; margin-bottom: 40px;">
     <div class="container">
         <h1 class="display-4 fw-bold">Lezzet Dünyası 🍳</h1>
-        <p class="lead">En sevdiğin tarifleri sakla ve paylaş.</p>
+        <p class="lead">Aradığın tüm tarifler burada.</p>
         <a href="/Recipes/Create" class="btn btn-warning btn-lg fw-bold mt-2">+ Yeni Tarif Ekle</a>
     </div>
 </div>
 
 <div class="container">
     <h2 class="text-center mb-4 fw-bold">🍽️ Eklenen Tarifler</h2>
-    <div class="row">
-        @if (Model != null && Model.Any())
-        {
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row">
             @foreach (var item in Model)
             {
-                // RESİM AYARLAMA MANTIĞI
-                string resimLink = "https://i.ytimg.com/vi/KWE0kdVpcog/hqdefault.jpg"; // Varsayılan
+                // Resim Mantığı
+                string resimLink = "https://i.ytimg.com/vi/KWE0kdVpcog/hqdefault.jpg";
                 if (item.Category == "Çorba") { resimLink = "https://d17wu0fn6x6rgz.cloudfront.net/img/w/tarif/mgt/16_16_11zon-487.webp"; }
                 else if (item.Category == "Tatlı") { resimLink = "https://pimedya.com/images/gorseller/fistikli-baklava-porsiyon.jpg"; }
 
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow border-0 hover-effect">
+                    <div class="card h-100 shadow border-0">
                         <img src="@resimLink" class="card-img-top" style="height: 200px; object-fit: cover;">
                         <div class="card-body">
                             <h5 class="card-title fw-bold">@item.Name</h5>
                             <span class="badge bg-warning text-dark mb-2">@item.Category</span>
                             <p class="card-text text-muted small">
-                                @(item.Ingredients != null && item.Ingredients.Length > 80 ? item.Ingredients.Substring(0, 77) + "..." : item.Ingredients)
+                                @(item.Instructions != null && item.Instructions.Length > 80 ? item.Instructions.Substring(0, 77) + "..." : item.Instructions)
                             </p>
                         </div>
                     </div>
                 </div>
             }
-        }
-        else
-        {
-            <div class="col-12 text-center">
-                <div class="alert alert-warning">Henüz hiç tarif eklenmemiş. İlk ekleyen sen ol!</div>
-            </div>
-        }
-    </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center">
+            <h4>Henüz hiç tarif yok! 😔</h4>
+            <p>Veritabanı sıfırlandı. İlk tarifi sen ekle!</p>
+        </div>
+    }
 </div>
