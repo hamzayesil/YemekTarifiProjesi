@@ -50,10 +50,13 @@ namespace YemekTarifiProjesi.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Ingredients,Category")] Recipe recipe)
+        public async Task<IActionResult> Create([Bind("Id,Name,Category,Ingredients,Instructions")] Recipe recipe)
         {
             if (ModelState.IsValid)
             {
+                // Tarihi otomatik şu anki zaman yapalım
+                recipe.CreatedDate = DateTime.Now;
+
                 // Kategori boş gelirse varsayılan ata
                 if (string.IsNullOrEmpty(recipe.Category))
                 {
