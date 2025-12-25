@@ -49,25 +49,21 @@ namespace YemekTarifiProjesi.Controllers
             return View();
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Category,Ingredients,Instructions")] Recipe recipe)
+        public IActionResult Create(Recipe yemek) // Parametre adı sende farklı olabilir
         {
-            if (ModelState.IsValid)
+            try
             {
-                // Tarihi otomatik şu anki zaman yapalım
-                recipe.CreatedDate = DateTime.Now;
-
-                // Kategori boş gelirse varsayılan ata
-                if (string.IsNullOrEmpty(recipe.Category))
-                {
-                    recipe.Category = "Ana Yemek";
-                }
-
-                _context.Add(recipe);
-                await _context.SaveChangesAsync();
+                // Senin mevcut kaydetme kodların burada kalsın
+                _context.Add(yemek);
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
-            return View(recipe);
+            catch (Exception hata)
+            {
+                // HATA VARSA BURASI ÇALIŞACAK VE EKRANA YAZACAK
+                var mesaj = hata.InnerException != null ? hata.InnerException.Message : hata.Message;
+                return Content("HATA DETAYI: " + mesaj);
+            }
         }
 
 
