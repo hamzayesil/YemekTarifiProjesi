@@ -1,12 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YemekTarifiProjesi.Models;
 
+// 1. TARİH HATASI ÇÖZÜMÜ (PostgreSQL için gerekli ayar)
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // --- VERİTABANI BAĞLANTISI ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// URL Düzeltme (Render İçin)
+// URL Düzeltme (Render ve Yerel çalışma için)
 if (!string.IsNullOrEmpty(connectionString))
 {
     connectionString = connectionString.Trim().Trim('"');
@@ -22,7 +25,7 @@ if (!string.IsNullOrEmpty(connectionString))
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Hata: " + ex.Message);
+            Console.WriteLine("Bağlantı dizesi hatası: " + ex.Message);
         }
     }
 }
@@ -35,7 +38,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// --- KRİTİK BÖLÜM: VERİTABANINI SIFIRLAYIP YENİDEN KURUYORUZ ---
+// --- VERİTABANI KONTROLÜ (ARTIK SİLME YAPMAZ) ---
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -43,15 +46,15 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<AppDbContext>();
 
-        // ⚠️ BU SATIR ESKİ HATALI TABLOLARI SİLER
-        context.Database.EnsureDeleted();
+        // DİKKAT: Verilerin silinmemesi için bu satırı iptal ettim.
+        // context.Database.EnsureDeleted(); 
 
-        // ⚠️ BU SATIR YENİ MODELİNE GÖRE TERTEMİZ KURAR
+        // Veritabanı yoksa oluşturur, varsa içindeki verilere dokunmaz.
         context.Database.EnsureCreated();
     }
     catch (Exception ex)
     {
-        Console.WriteLine("Veritabanı yenileme hatası: " + ex.Message);
+        Console.WriteLine("Veritabanı başlatma hatası: " + ex.Message);
     }
 }
 // ----------------------------------------------------------------
@@ -66,6 +69,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
 app.UseAuthorization();
 
 app.MapControllerRoute(

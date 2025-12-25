@@ -2,7 +2,78 @@
     ViewData["Title"] = "Ana Sayfa";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Yemek Tarifleri</h1>
-    <p>Sisteme hoş geldiniz.</p>
+<style>
+    /* Bu kısım sayfanın tasarım ayarlarıdır */
+    .hero-container {
+        /* Arka plan resmi ve üzerindeki karartma efekti */
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://png.pngtree.com/thumb_back/fh260/background/20230624/pngtree-brown-themed-small-cafe-3d-rendering-on-background-image_3667836.jpg');
+        /* Resmi tüm alana yay ve tekrar etmesini engelle */
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        /* --- TAM EKRAN AYARLARI --- */
+        /* Normal kapsayıcının dışına taşır */
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        border-radius: 0; /* Köşeleri düzleştir */
+        /* Yükseklik ayarı: Ekranın %92'sini kaplasın */
+        height: 92vh;
+        /* Yazıyı tam ortalamak için Flexbox kullanımı */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        /* Yazı rengi */
+        color: white;
+        text-align: center;
+    }
+
+    .buyuk-baslik {
+        font-size: 7rem; /* Yazıyı biraz daha büyüttüm */
+        font-weight: bold;
+        text-transform: uppercase;
+        text-shadow: 3px 3px 15px rgba(0,0,0,0.9);
+        margin-bottom: 0;
+        line-height: 1.1;
+    }
+
+    .alt-baslik {
+        font-size: 1.8rem; /* Alt başlığı da büyüttüm */
+        margin-top: 20px;
+        font-weight: 300;
+        letter-spacing: 3px;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    }
+
+    .btn-ozel {
+        margin-top: 50px;
+        padding: 18px 50px; /* Butonu biraz büyüttüm */
+        font-size: 1.4rem;
+        border-radius: 50px;
+        background-color: #ff9f1c;
+        color: white;
+        border: none;
+        transition: 0.3s all ease;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(255, 159, 28, 0.4);
+        font-weight: 600;
+    }
+
+        .btn-ozel:hover {
+            background-color: #e0890b;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(255, 159, 28, 0.7);
+        }
+</style>
+
+<div class="hero-container">
+    <h1 class="buyuk-baslik">LEZZET DÜNYASI</h1>
+    <p class="alt-baslik">En Seçkin Tarifler ve Eşsiz Tatlar</p>
+
+    <a href="/Recipes/Index" class="btn-ozel">Tarifleri Keşfet</a>
 </div>
