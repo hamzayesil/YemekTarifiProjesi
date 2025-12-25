@@ -1,5 +1,37 @@
 ﻿@model IEnumerable<YemekTarifiProjesi.Models.Recipe>
 
+<div class="p-5 mb-4 bg-light rounded-3 shadow"
+     style="background-image: url('https://source.unsplash.com/1600x900/?food,dinner'); background-size: cover; background-position: center; position: relative;">
+
+    <div style="background-color: rgba(0, 0, 0, 0.6); position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 0.3rem;"></div>
+
+    <div class="container-fluid py-5 position-relative text-white text-center">
+        <h1 class="display-4 fw-bold">Hoşgeldiniz! 🍳</h1>
+        <p class="col-md-8 mx-auto fs-4">
+            En lezzetli tarifleri keşfetmeye hazır mısınız?
+            Aradığınız tüm lezzetler burada.
+        </p>
+        <a asp-action="Create" class="btn btn-warning btn-lg mt-3 fw-bold">
+            + Yeni Tarif Ekle
+        </a>
+    </div>
+</div>
+
+
+<div class="row mb-3 mt-3">
+    <div class="col-md-6">
+        <form asp-controller="Recipes" asp-action="Index" method="get">
+            <div class="input-group">
+                <input type="text" name="searchString" class="form-control" placeholder="Yemek ismi ara...">
+                <button class="btn btn-primary" type="submit">Ara</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6 text-end">
+        <a asp-action="Index" class="btn btn-secondary">Tümünü Göster</a>
+    </div>
+</div>
+
 
 <div class="container mt-4">
     <h2 class="text-center mb-4">🍽️ Paylaşılan Lezzetler</h2>
@@ -68,22 +100,17 @@
 
 
 
-    <div class="row">
-        @foreach (var item in Model)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <h5 class="card-title text-primary">@item.Name</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">@item.Category</h6>
-                        <p class="card-text"><strong>Malzemeler:</strong> @item.Ingredients</p>
-                        <div class="mt-auto border-top pt-3">
-                            
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('Silmek istediğine emin misin?')">Sil</a>
-                        </div>
-                    </div>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">@item.Name</h5> <p class="card-text">@item.@item.Name.Substring(0, Math.Min(item.Name.Length, 50))...</p> <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-success btn-sm">Tarifi İncele</a>
                 </div>
             </div>
-        }
-    </div>
+        </div>
+    }
+</div>
 </div>

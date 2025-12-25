@@ -20,13 +20,26 @@ namespace YemekTarifiProjesi.Controllers
       
         private static List<Recipe> _recipes = new List<Recipe>();
 
-      
-        public IActionResult Index()
+
+        // GET: Recipes
+        // GET: Recipes
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(_recipes);
+            // Veritabanı sorgusunu hazırla
+            var recipes = from r in _context.Recipes
+                          select r;
+
+            // Arama kutusu doluysa filtrele
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                // Description (Açıklama) olmadığı için sadece Name (İsim) içinde arıyoruz
+                recipes = recipes.Where(s => s.Name.Contains(searchString));
+            }
+
+            return View(await recipes.ToListAsync());
         }
 
-      
+
         public IActionResult Create()
         {
             return View();
