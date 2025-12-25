@@ -4,51 +4,35 @@
     ViewData["Title"] = "Ana Sayfa";
 }
 
-<div class="hero-section">
+<div class="hero-section" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200'); background-size: cover; height: 400px; display: flex; align-items: center; justify-content: center; color: white; text-align: center; border-radius: 0 0 20px 20px; margin-bottom: 40px;">
     <div class="container">
-        <h1 class="display-4 fw-bold">Hoşgeldiniz! 🥘</h1>
-        <p class="lead">Lezzet dünyasına adım atın.</p>
-        <a href="/Recipes/Create" class="btn btn-warning btn-lg mt-3 fw-bold">+ Tarif Ekle</a>
+        <h1 class="display-4 fw-bold">Lezzet Dünyası 🍳</h1>
+        <p class="lead">En sevdiğin tarifleri sakla ve paylaş.</p>
+        <a href="/Recipes/Create" class="btn btn-warning btn-lg fw-bold mt-2">+ Yeni Tarif Ekle</a>
     </div>
 </div>
 
-<div class="container mt-5">
-    <div class="text-center mb-4">
-        <h2 class="fw-bold">🍽️ Paylaşılan Lezzetler</h2>
-        <hr class="w-25 mx-auto text-warning" style="height: 3px; opacity: 1;">
-    </div>
-
+<div class="container">
+    <h2 class="text-center mb-4 fw-bold">🍽️ Eklenen Tarifler</h2>
     <div class="row">
         @if (Model != null && Model.Any())
         {
             @foreach (var item in Model)
             {
-                // --- BURADA RESMİ KATEGORİYE GÖRE BELİRLİYORUZ ---
-                string resimLink = "https://i.ytimg.com/vi/KWE0kdVpcog/hqdefault.jpg"; // Varsayılan (Ana Yemek)
-
-                if (item.Category != null && item.Category.Contains("Çorba"))
-                {
-                    resimLink = "https://d17wu0fn6x6rgz.cloudfront.net/img/w/tarif/mgt/16_16_11zon-487.webp";
-                }
-                else if (item.Category != null && item.Category.Contains("Tatlı"))
-                {
-                    resimLink = "https://pimedya.com/images/gorseller/fistikli-baklava-porsiyon.jpg";
-                }
-                // ----------------------------------------------------
+                // RESİM AYARLAMA MANTIĞI
+                string resimLink = "https://i.ytimg.com/vi/KWE0kdVpcog/hqdefault.jpg"; // Varsayılan
+                if (item.Category == "Çorba") { resimLink = "https://d17wu0fn6x6rgz.cloudfront.net/img/w/tarif/mgt/16_16_11zon-487.webp"; }
+                else if (item.Category == "Tatlı") { resimLink = "https://pimedya.com/images/gorseller/fistikli-baklava-porsiyon.jpg"; }
 
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm border-0">
-                        <img src="@resimLink" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
-
+                    <div class="card h-100 shadow border-0 hover-effect">
+                        <img src="@resimLink" class="card-img-top" style="height: 200px; object-fit: cover;">
                         <div class="card-body">
-                            <h5 class="card-title fw-bold text-dark">@item.Name</h5>
+                            <h5 class="card-title fw-bold">@item.Name</h5>
                             <span class="badge bg-warning text-dark mb-2">@item.Category</span>
                             <p class="card-text text-muted small">
                                 @(item.Ingredients != null && item.Ingredients.Length > 80 ? item.Ingredients.Substring(0, 77) + "..." : item.Ingredients)
                             </p>
-                        </div>
-                        <div class="card-footer bg-transparent border-0 pb-3">
-                            <a href="/Recipes/Details/@item.Id" class="btn btn-outline-dark w-100">İncele</a>
                         </div>
                     </div>
                 </div>
@@ -57,10 +41,7 @@
         else
         {
             <div class="col-12 text-center">
-                <div class="alert alert-light border" role="alert">
-                    <h5>Henüz hiç tarif yok! 😔</h5>
-                    <p>İlk tarifi sen ekle!</p>
-                </div>
+                <div class="alert alert-warning">Henüz hiç tarif eklenmemiş. İlk ekleyen sen ol!</div>
             </div>
         }
     </div>

@@ -1,65 +1,61 @@
-using Microsoft.EntityFrameworkCore;
-using YemekTarifiProjesi.Models; // Eğer hata verirse burayı .Data olarak dene
+ï»¿using Microsoft.EntityFrameworkCore;
+using YemekTarifiProjesi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ---------------------------------------------------------
-// 1. VERİTABANI BAĞLANTISI VE PORT DÜZELTME KODU (BURASI ÇOK ÖNEMLİ)
-// ---------------------------------------------------------
+// --- VERÄ°TABANI BAÄLANTISI ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Link temizliği (Boşluk ve tırnakları at)
+// URL DÃ¼zeltme (Render Ä°Ã§in)
 if (!string.IsNullOrEmpty(connectionString))
 {
     connectionString = connectionString.Trim().Trim('"');
-}
 
-// Render URL Dönüştürücü
-if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("postgres"))
-{
-    try
+    if (connectionString.StartsWith("postgres"))
     {
-        var databaseUri = new Uri(connectionString);
-        var userInfo = databaseUri.UserInfo.Split(':');
-
-        // PORT DÜZELTME: Eğer port -1 gelirse (yazmıyorsa) 5432 yap.
-        int port = databaseUri.Port == -1 ? 5432 : databaseUri.Port;
-
-        connectionString = $"Host={databaseUri.Host};Port={port};Database={databaseUri.LocalPath.TrimStart('/')};User Id={userInfo[0]};Password={userInfo[1]};Ssl Mode=Require;Trust Server Certificate=true";
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine("URL Dönüştürme Hatası: " + ex.Message);
-        // Hata olsa bile devam etsin, belki connectionString doğrudur.
+        try
+        {
+            var databaseUri = new Uri(connectionString);
+            var userInfo = databaseUri.UserInfo.Split(':');
+            int port = databaseUri.Port == -1 ? 5432 : databaseUri.Port;
+            connectionString = $"Host={databaseUri.Host};Port={port};Database={databaseUri.LocalPath.TrimStart('/')};User Id={userInfo[0]};Password={userInfo[1]};Ssl Mode=Require;Trust Server Certificate=true";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Hata: " + ex.Message);
+        }
     }
 }
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
+// -----------------------------
 
-// ---------------------------------------------------------
-
-// Diğer servisler
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Otomatik Veritabanı Güncelleme (Migration)
+// --- KRÄ°TÄ°K BÃ–LÃœM: VERÄ°TABANINI SIFIRLAYIP YENÄ°DEN KURUYORUZ ---
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<AppDbContext>();
-        context.Database.Migrate();
+
+        // âš ï¸ BU SATIR ESKÄ° HATALI TABLOLARI SÄ°LER
+        context.Database.EnsureDeleted();
+
+        // âš ï¸ BU SATIR YENÄ° MODELÄ°NE GÃ–RE TERTEMÄ°Z KURAR
+        context.Database.EnsureCreated();
     }
     catch (Exception ex)
     {
-        Console.WriteLine("Veritabanı oluşturma hatası: " + ex.Message);
+        Console.WriteLine("VeritabanÄ± yenileme hatasÄ±: " + ex.Message);
     }
 }
+// ----------------------------------------------------------------
 
-// HTTP İsteği hattı (Pipeline)
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -70,11 +66,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Recipes}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
